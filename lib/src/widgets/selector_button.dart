@@ -47,7 +47,6 @@ class SelectorButton extends StatelessWidget {
                     country: country,
                     showFlag: selectorConfig.showFlags,
                     useEmoji: selectorConfig.useEmoji,
-                    padding: selectorConfig.padding,
                     trailingSpace: selectorConfig.trailingSpace,
                     textStyle: selectorTextStyle,
                   ),
@@ -60,14 +59,13 @@ class SelectorButton extends StatelessWidget {
                 country: country,
                 showFlag: selectorConfig.showFlags,
                 useEmoji: selectorConfig.useEmoji,
-                padding: selectorConfig.padding,
                 trailingSpace: selectorConfig.trailingSpace,
                 textStyle: selectorTextStyle,
               )
         : IntrinsicWidth(
             child: Row(
               children: [
-                SizedBox(width: 4),
+                SizedBox(width: selectorConfig.leadingPadding),
                 MaterialButton(
                   key: Key(TestHelper.DropdownButtonKeyValue),
                   padding: EdgeInsets.zero,

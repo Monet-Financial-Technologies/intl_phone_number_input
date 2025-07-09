@@ -239,11 +239,17 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
         });
       }
 
-      getParsedPhoneNumber(parsedPhoneNumberString, this.country?.alpha2Code)
+      // Library expects phoneNumber to be without isoCode
+      String phoneNumberWithoutIso = countryFromString == null
+          ? ''
+          : parsedPhoneNumberString
+              .substring(countryFromString.dialCode!.length - 1);
+
+      getParsedPhoneNumber(phoneNumberWithoutIso, this.country?.alpha2Code)
           .then((phoneNumber) {
         if (phoneNumber == null) {
           String phoneNumber =
-              '${this.country?.dialCode}$parsedPhoneNumberString';
+              '${this.country?.dialCode}$phoneNumberWithoutIso';
 
           if (widget.onInputChanged != null) {
             widget.onInputChanged!(PhoneNumber(

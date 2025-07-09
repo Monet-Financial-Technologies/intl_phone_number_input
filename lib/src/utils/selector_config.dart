@@ -27,6 +27,9 @@ class SelectorConfig {
   /// [setSelectorButtonAsPrefixIcon], this sets/places the selector button inside the [TextField] as a prefixIcon.
   final bool setSelectorButtonAsPrefixIcon;
 
+  /// Space before the button
+  final double? leadingPadding;
+
   /// Padding
   final EdgeInsetsGeometry? padding;
 
@@ -44,6 +47,7 @@ class SelectorConfig {
     this.useEmoji = false,
     this.countryComparator,
     this.setSelectorButtonAsPrefixIcon = false,
+    this.leadingPadding,
     this.padding,
     this.trailingSpace = true,
     this.useBottomSheetSafeArea = false,

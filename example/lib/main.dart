@@ -55,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 setSelectorButtonAsPrefixIcon: true,
                 padding: const EdgeInsets.only(
                     top: 4, bottom: 4, left: 12, right: 4),
+                leadingPadding: 4,
                 trailingSpace: false,
                 borderRadius: 16,
               ),

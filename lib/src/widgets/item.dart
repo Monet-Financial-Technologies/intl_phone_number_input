@@ -9,7 +9,6 @@ class Item extends StatelessWidget {
   final bool? useEmoji;
   final TextStyle? textStyle;
   final bool withCountryNames;
-  final EdgeInsetsGeometry? padding;
   final bool trailingSpace;
   final Color? iconColor;
 
@@ -20,7 +19,6 @@ class Item extends StatelessWidget {
     this.useEmoji,
     this.textStyle,
     this.withCountryNames = false,
-    this.padding,
     this.trailingSpace = true,
     this.iconColor,
   }) : super(key: key);
