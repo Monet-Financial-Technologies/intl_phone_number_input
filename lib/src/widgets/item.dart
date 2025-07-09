@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl_phone_number_input/src/models/country_model.dart';
-import 'package:intl_phone_number_input/src/utils/util.dart';
+import 'package:intl_phone_number_input_bonimo/src/models/country_model.dart';
+import 'package:intl_phone_number_input_bonimo/src/utils/util.dart';
 
 /// [Item]
 class Item extends StatelessWidget {
@@ -9,8 +9,9 @@ class Item extends StatelessWidget {
   final bool? useEmoji;
   final TextStyle? textStyle;
   final bool withCountryNames;
-  final double? leadingPadding;
+  final EdgeInsetsGeometry? padding;
   final bool trailingSpace;
+  final Color? iconColor;
 
   const Item({
     Key? key,
@@ -19,8 +20,9 @@ class Item extends StatelessWidget {
     this.useEmoji,
     this.textStyle,
     this.withCountryNames = false,
-    this.leadingPadding = 12,
+    this.padding,
     this.trailingSpace = true,
+    this.iconColor,
   }) : super(key: key);
 
   @override
@@ -34,18 +36,22 @@ class Item extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          SizedBox(width: leadingPadding),
-          _Flag(
-            country: country,
-            showFlag: showFlag,
-            useEmoji: useEmoji,
-          ),
-          SizedBox(width: 12.0),
-          Text(
-            '$dialCode',
-            textDirection: TextDirection.ltr,
-            style: textStyle,
-          ),
+          country != null
+              ? _Flag(
+                  country: country,
+                  showFlag: showFlag,
+                  useEmoji: useEmoji,
+                )
+              : Icon(
+                  Icons.call,
+                  color: iconColor,
+                ),
+          // SizedBox(width: 12.0),
+          // Text(
+          //   '$dialCode',
+          //   textDirection: TextDirection.ltr,
+          //   style: textStyle,
+          // ),
         ],
       ),
     );
@@ -72,7 +78,7 @@ class _Flag extends StatelessWidget {
                 : Image.asset(
                     country!.flagUri,
                     width: 32.0,
-                    package: 'intl_phone_number_input',
+                    package: 'intl_phone_number_input_bonimo',
                     errorBuilder: (context, error, stackTrace) {
                       return SizedBox.shrink();
                     },

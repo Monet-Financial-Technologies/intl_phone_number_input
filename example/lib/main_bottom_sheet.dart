@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:intl_phone_number_input_bonimo/intl_phone_number_input.dart';
 
 void main() => runApp(MyApp());
 

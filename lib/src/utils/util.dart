@@ -1,13 +1,13 @@
-import 'package:intl_phone_number_input/src/models/country_model.dart';
+import 'package:collection/collection.dart';
+import 'package:intl_phone_number_input_bonimo/src/models/country_model.dart';
 
 /// [Utils] class contains utility methods for `intl_phone_number_input` library
 class Utils {
   ///  Returns a [Country] form list of [countries] passed that matches [countryCode].
-  ///  Returns the first [Country] in the list if no match is available.
-  static Country getInitialSelectedCountry(
+  static Country? getInitialSelectedCountry(
       List<Country> countries, String countryCode) {
-    return countries.firstWhere((country) => country.alpha2Code == countryCode,
-        orElse: () => countries[0]);
+    return countries
+        .firstWhereOrNull((country) => country.alpha2Code == countryCode);
   }
 
   /// Returns a [String] which will be the unicode of a Flag Emoji,
@@ -57,5 +57,16 @@ class Utils {
       }
     }
     return country.name;
+  }
+
+  static Country? getCountryFromIsoCode(
+      List<Country> countries, String isoCode) {
+    return countries.firstWhereOrNull(
+        (Country x) => x.alpha2Code != null && x.alpha2Code == isoCode);
+  }
+
+  static Country? getCountryFromNumber(List<Country> countries, String number) {
+    return countries.firstWhereOrNull((Country x) =>
+        x.dialCode != null && number.startsWith(x.dialCode!.substring(1)));
   }
 }

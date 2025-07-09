@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl_phone_number_input/src/models/country_model.dart';
-import 'package:intl_phone_number_input/src/utils/selector_config.dart';
-import 'package:intl_phone_number_input/src/utils/test/test_helper.dart';
-import 'package:intl_phone_number_input/src/widgets/countries_search_list_widget.dart';
-import 'package:intl_phone_number_input/src/widgets/input_widget.dart';
-import 'package:intl_phone_number_input/src/widgets/item.dart';
+import 'package:intl_phone_number_input_bonimo/src/models/country_model.dart';
+import 'package:intl_phone_number_input_bonimo/src/utils/selector_config.dart';
+import 'package:intl_phone_number_input_bonimo/src/utils/test/test_helper.dart';
+import 'package:intl_phone_number_input_bonimo/src/widgets/countries_search_list_widget.dart';
+import 'package:intl_phone_number_input_bonimo/src/widgets/input_widget.dart';
+import 'package:intl_phone_number_input_bonimo/src/widgets/item.dart';
 
 /// [SelectorButton]
 class SelectorButton extends StatelessWidget {
@@ -17,6 +17,7 @@ class SelectorButton extends StatelessWidget {
   final String? locale;
   final bool isEnabled;
   final bool isScrollControlled;
+  final Color? iconColor;
 
   final ValueChanged<Country?> onCountryChanged;
 
@@ -32,6 +33,7 @@ class SelectorButton extends StatelessWidget {
     required this.onCountryChanged,
     required this.isEnabled,
     required this.isScrollControlled,
+    required this.iconColor,
   }) : super(key: key);
 
   @override
@@ -45,7 +47,7 @@ class SelectorButton extends StatelessWidget {
                     country: country,
                     showFlag: selectorConfig.showFlags,
                     useEmoji: selectorConfig.useEmoji,
-                    leadingPadding: selectorConfig.leadingPadding,
+                    padding: selectorConfig.padding,
                     trailingSpace: selectorConfig.trailingSpace,
                     textStyle: selectorTextStyle,
                   ),
@@ -58,41 +60,72 @@ class SelectorButton extends StatelessWidget {
                 country: country,
                 showFlag: selectorConfig.showFlags,
                 useEmoji: selectorConfig.useEmoji,
-                leadingPadding: selectorConfig.leadingPadding,
+                padding: selectorConfig.padding,
                 trailingSpace: selectorConfig.trailingSpace,
                 textStyle: selectorTextStyle,
               )
-        : MaterialButton(
-            key: Key(TestHelper.DropdownButtonKeyValue),
-            padding: EdgeInsets.zero,
-            minWidth: 0,
-            onPressed: countries.isNotEmpty && countries.length > 1 && isEnabled
-                ? () async {
-                    Country? selected;
-                    if (selectorConfig.selectorType ==
-                        PhoneInputSelectorType.BOTTOM_SHEET) {
-                      selected = await showCountrySelectorBottomSheet(
-                          context, countries);
-                    } else {
-                      selected =
-                          await showCountrySelectorDialog(context, countries);
-                    }
+        : IntrinsicWidth(
+            child: Row(
+              children: [
+                SizedBox(width: 4),
+                MaterialButton(
+                  key: Key(TestHelper.DropdownButtonKeyValue),
+                  padding: EdgeInsets.zero,
+                  minWidth: 0,
+                  onPressed:
+                      countries.isNotEmpty && countries.length > 1 && isEnabled
+                          ? () async {
+                              Country? selected;
+                              if (selectorConfig.selectorType ==
+                                  PhoneInputSelectorType.BOTTOM_SHEET) {
+                                selected = await showCountrySelectorBottomSheet(
+                                    context, countries);
+                              } else {
+                                selected = await showCountrySelectorDialog(
+                                    context, countries);
+                              }
 
-                    if (selected != null) {
-                      onCountryChanged(selected);
-                    }
-                  }
-                : null,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Item(
-                country: country,
-                showFlag: selectorConfig.showFlags,
-                useEmoji: selectorConfig.useEmoji,
-                leadingPadding: selectorConfig.leadingPadding,
-                trailingSpace: selectorConfig.trailingSpace,
-                textStyle: selectorTextStyle,
-              ),
+                              if (selected != null) {
+                                onCountryChanged(selected);
+                              }
+                            }
+                          : null,
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(selectorConfig.borderRadius),
+                  ),
+                  child: Container(
+                    height: 28,
+                    padding: selectorConfig.padding,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: FittedBox(
+                            child: Item(
+                              country: country,
+                              showFlag: selectorConfig.showFlags,
+                              useEmoji: selectorConfig.useEmoji,
+                              trailingSpace: selectorConfig.trailingSpace,
+                              textStyle: selectorTextStyle,
+                              iconColor: iconColor,
+                            ),
+                          ),
+                        ),
+                        Icon(Icons.arrow_drop_down, size: 20),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                const Text('+'),
+                const SizedBox(
+                  width: 4,
+                ),
+              ],
             ),
           );
   }

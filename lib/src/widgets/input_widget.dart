@@ -1,18 +1,19 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl_phone_number_input/src/models/country_list.dart';
-import 'package:intl_phone_number_input/src/models/country_model.dart';
-import 'package:intl_phone_number_input/src/providers/country_provider.dart';
-import 'package:intl_phone_number_input/src/utils/formatter/as_you_type_formatter.dart';
-import 'package:intl_phone_number_input/src/utils/phone_number.dart';
-import 'package:intl_phone_number_input/src/utils/phone_number/phone_number_util.dart';
-import 'package:intl_phone_number_input/src/utils/selector_config.dart';
-import 'package:intl_phone_number_input/src/utils/test/test_helper.dart';
-import 'package:intl_phone_number_input/src/utils/util.dart';
-import 'package:intl_phone_number_input/src/utils/widget_view.dart';
-import 'package:intl_phone_number_input/src/widgets/selector_button.dart';
+import 'package:intl_phone_number_input_bonimo/src/models/country_list.dart';
+import 'package:intl_phone_number_input_bonimo/src/models/country_model.dart';
+import 'package:intl_phone_number_input_bonimo/src/providers/country_provider.dart';
+import 'package:intl_phone_number_input_bonimo/src/utils/formatter/as_you_type_formatter.dart';
+import 'package:intl_phone_number_input_bonimo/src/utils/phone_number.dart';
+import 'package:intl_phone_number_input_bonimo/src/utils/phone_number/phone_number_util.dart';
+import 'package:intl_phone_number_input_bonimo/src/utils/selector_config.dart';
+import 'package:intl_phone_number_input_bonimo/src/utils/test/test_helper.dart';
+import 'package:intl_phone_number_input_bonimo/src/utils/util.dart';
+import 'package:intl_phone_number_input_bonimo/src/utils/widget_view.dart';
+import 'package:intl_phone_number_input_bonimo/src/widgets/selector_button.dart';
 
 /// Enum for [SelectorButton] types.
 ///
@@ -77,6 +78,7 @@ class InternationalPhoneNumberInput extends StatefulWidget {
   final InputDecoration? inputDecoration;
   final InputDecoration? searchBoxDecoration;
   final Color? cursorColor;
+  final Color? iconColor;
   final TextAlign textAlign;
   final TextAlignVertical textAlignVertical;
   final EdgeInsets scrollPadding;
@@ -123,6 +125,7 @@ class InternationalPhoneNumberInput extends StatefulWidget {
       this.scrollPadding = const EdgeInsets.all(20.0),
       this.focusNode,
       this.cursorColor,
+      this.iconColor,
       this.autofillHints,
       this.countries})
       : super(key: key);
@@ -199,7 +202,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
       List<Country> countries =
           CountryProvider.getCountriesData(countries: widget.countries);
 
-      Country country = previouslySelectedCountry ??
+      Country? country = previouslySelectedCountry ??
           Utils.getInitialSelectedCountry(
             countries,
             widget.initialValue?.isoCode ?? '',
@@ -227,6 +230,14 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
     if (this.mounted) {
       String parsedPhoneNumberString =
           controller!.text.replaceAll(RegExp(r'[^\d+]'), '');
+
+      Country? countryFromString =
+          Utils.getCountryFromNumber(countries, parsedPhoneNumberString);
+      if (this.country != countryFromString) {
+        setState(() {
+          this.country = countryFromString;
+        });
+      }
 
       getParsedPhoneNumber(parsedPhoneNumberString, this.country?.alpha2Code)
           .then((phoneNumber) {
@@ -303,6 +314,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
         isEnabled: widget.isEnabled,
         autoFocusSearchField: widget.autoFocusSearch,
         isScrollControlled: widget.countrySelectorScrollControlled,
+        iconColor: widget.iconColor,
       ));
     }
 
@@ -339,6 +351,24 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   /// Changes Selector Button Country and Validate Change.
   void onCountryChanged(Country? country) {
     setState(() {
+      // Replace text's isoCode
+      if (this.country != null) {
+        controller!.text =
+            controller!.text.substring(this.country!.dialCode!.length - 1);
+      }
+      if (country != null) {
+        controller!.text = controller!.text =
+            country.dialCode!.substring(1) + controller!.text;
+      }
+
+      // For some reason selects whole number when setting text, so
+      // use PostFrameCallback to force collapsed text selection
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller!.selection = TextSelection.collapsed(
+          offset: controller!.text.length,
+        );
+      });
+
       this.country = country;
     });
     phoneNumberControllerListener();
@@ -410,6 +440,7 @@ class _InputWidgetView
                   isEnabled: widget.isEnabled,
                   autoFocusSearchField: widget.autoFocusSearch,
                   isScrollControlled: widget.countrySelectorScrollControlled,
+                  iconColor: widget.iconColor,
                 ),
                 SizedBox(
                   height: state.selectorButtonBottomPadding,
@@ -441,16 +472,18 @@ class _InputWidgetView
               onSaved: state.onSaved,
               scrollPadding: widget.scrollPadding,
               inputFormatters: [
-                LengthLimitingTextInputFormatter(widget.maxLength),
-                widget.formatInput
-                    ? AsYouTypeFormatter(
-                        isoCode: countryCode,
-                        dialCode: dialCode,
-                        onInputFormatted: (TextEditingValue value) {
-                          state.controller!.value = value;
-                        },
-                      )
-                    : FilteringTextInputFormatter.digitsOnly,
+                // LengthLimitingTextInputFormatter(widget.maxLength),
+                // widget.formatInput
+                //     ? AsYouTypeFormatter(
+                //         isoCode: countryCode,
+                //         dialCode: dialCode,
+                //         onInputFormatted: (TextEditingValue value) {
+                //           state.controller!.value = value;
+                //         },
+                //       )
+                //     :
+                FilteringTextInputFormatter.digitsOnly,
+                IsoCodeFormatter(countries: state.countries)
               ],
               onChanged: state.onChanged,
             ),
@@ -458,5 +491,122 @@ class _InputWidgetView
         ],
       ),
     );
+  }
+}
+
+class IsoCodeFormatter extends TextInputFormatter {
+  List<Country> countries;
+
+  IsoCodeFormatter({required this.countries});
+
+  (bool, TextEditingValue) _doFormatting(
+      bool wasSelection,
+      TextEditingValue oldValue,
+      bool isSelection,
+      TextEditingValue newValue,
+      Country? country) {
+    bool needsReevaluation = false;
+
+    final String noSpaceText = newValue.text.replaceAll(' ', '');
+    if (country == null) {
+      return (
+        needsReevaluation,
+        newValue.copyWith(
+          text: noSpaceText,
+          // Brings cursor back if user presses space with no valid country
+          selection: isSelection
+              ? newValue.selection
+              : TextSelection.collapsed(
+                  offset: min(newValue.selection.start, noSpaceText.length)),
+        )
+      );
+    } else {
+      final String isoCode = country.dialCode!.substring(1);
+
+      // Ensure space after isoCode
+      String formattedValue = noSpaceText.length >= isoCode.length
+          ? '${noSpaceText.substring(0, isoCode.length)} ${noSpaceText.substring(isoCode.length)}'
+          : noSpaceText;
+
+      final bool spaceAdded = newValue.text.length <= isoCode.length ||
+          (newValue.text.length > isoCode.length &&
+              newValue.text[isoCode.length] != ' ');
+
+      // Extra spaces removed
+      final int spacesRemoved =
+          max(newValue.text.length - formattedValue.length, 0);
+
+      // Push cursor by 1 if space is added, IF selection is after it
+      int spaceOffset =
+          spaceAdded && newValue.selection.start >= isoCode.length ? 1 : 0;
+      spaceOffset -= spacesRemoved;
+
+      // Get first letter difference (check for space deletion)
+      int i = 0;
+      String? firstDiff;
+      while (i < oldValue.text.length && i < newValue.text.length) {
+        if (oldValue.text[i] != newValue.text[i]) {
+          firstDiff = oldValue.text[i];
+          break;
+        }
+        i++;
+      }
+      if (firstDiff == null && oldValue.text.length != newValue.text.length) {
+        firstDiff = oldValue.text.length > newValue.text.length
+            ? oldValue.text[newValue.text.length]
+            : newValue.text[oldValue.text.length];
+      }
+
+      // Case for removal of space in front of isoCode by user with
+      // backspace and not selection (delete this space + move cursor back)
+      if (!wasSelection &&
+          // Had space before
+          (oldValue.text.length > isoCode.length &&
+              oldValue.text[isoCode.length] == ' ') &&
+          // If last text was 1 char longer than this text (ensure deletion)
+          (oldValue.text.length - 1 == newValue.text.length) &&
+          // And doesn't anymore (space removed)
+          firstDiff == ' ') {
+        needsReevaluation = true;
+        formattedValue = formattedValue.substring(0, isoCode.length - 1) +
+            formattedValue.substring(isoCode.length);
+
+        spaceOffset -= 2;
+      }
+
+      return (
+        needsReevaluation,
+        newValue.copyWith(
+          text: formattedValue,
+          selection: isSelection
+              ? newValue.selection
+              : TextSelection.collapsed(
+                  offset: min(newValue.selection.start + spaceOffset,
+                      formattedValue.length)),
+        )
+      );
+    }
+  }
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    bool reevaluate = true;
+    while (reevaluate) {
+      Country? newCountry =
+          Utils.getCountryFromNumber(countries, newValue.text);
+
+      final (bool needsReevaluation, TextEditingValue formattedText) =
+          _doFormatting(
+        oldValue.selection.start != oldValue.selection.end,
+        oldValue,
+        newValue.selection.start != newValue.selection.end,
+        newValue,
+        newCountry,
+      );
+      reevaluate = needsReevaluation;
+      newValue = formattedText;
+    }
+    return newValue;
   }
 }

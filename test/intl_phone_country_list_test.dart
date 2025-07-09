@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:intl_phone_number_input/src/models/country_list.dart';
-import 'package:intl_phone_number_input/src/models/country_model.dart';
+import 'package:intl_phone_number_input_bonimo/src/models/country_list.dart';
+import 'package:intl_phone_number_input_bonimo/src/models/country_model.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

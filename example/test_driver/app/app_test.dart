@@ -1,5 +1,5 @@
 import 'package:flutter_driver/flutter_driver.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input_test.dart';
+import 'package:intl_phone_number_input_bonimo/intl_phone_number_input_test.dart';
 import 'package:test/test.dart';
 
 main() {
@@ -16,7 +16,7 @@ main() {
 
     tearDownAll(() async {
       driver.close();
-        });
+    });
 
     test('Tap On TextField and enter text', () async {
       await driver.tap(inputTextFieldFinder);

@@ -1,5 +1,5 @@
-import 'package:intl_phone_number_input/src/models/country_list.dart';
-import 'package:intl_phone_number_input/src/models/country_model.dart';
+import 'package:intl_phone_number_input_bonimo/src/models/country_list.dart';
+import 'package:intl_phone_number_input_bonimo/src/models/country_model.dart';
 
 const String PropertyName = 'alpha_2_code';
 
