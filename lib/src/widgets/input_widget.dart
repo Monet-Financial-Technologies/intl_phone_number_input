@@ -141,6 +141,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   Country? country;
   List<Country> countries = [];
   bool isNotValid = true;
+  List<TextInputFormatter> formatters = [];
 
   @override
   void initState() {
@@ -220,6 +221,10 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
       setState(() {
         this.countries = countries;
         this.country = country;
+        this.formatters = [
+          FilteringTextInputFormatter.digitsOnly,
+          IsoCodeFormatter(countries: countries)
+        ];
       });
     }
   }
@@ -354,9 +359,19 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
     return isValid ? widget.errorMessage : null;
   }
 
+  TextEditingValue _formatControllerValue(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    for (final f in formatters) {
+      newValue = f.formatEditUpdate(oldValue, newValue);
+    }
+    return newValue;
+  }
+
   /// Changes Selector Button Country and Validate Change.
   void onCountryChanged(Country? country) {
     setState(() {
+      final oldValue = controller!.value;
+
       // Replace text's isoCode
       if (this.country != null) {
         controller!.text =
@@ -366,6 +381,10 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
         controller!.text = controller!.text =
             country.dialCode!.substring(1) + controller!.text;
       }
+
+      final newValue = controller!.value;
+
+      controller!.value = _formatControllerValue(oldValue, newValue);
 
       // For some reason selects whole number when setting text, so
       // use PostFrameCallback to force collapsed text selection
@@ -477,20 +496,7 @@ class _InputWidgetView
               validator: widget.validator ?? state.validator,
               onSaved: state.onSaved,
               scrollPadding: widget.scrollPadding,
-              inputFormatters: [
-                // LengthLimitingTextInputFormatter(widget.maxLength),
-                // widget.formatInput
-                //     ? AsYouTypeFormatter(
-                //         isoCode: countryCode,
-                //         dialCode: dialCode,
-                //         onInputFormatted: (TextEditingValue value) {
-                //           state.controller!.value = value;
-                //         },
-                //       )
-                //     :
-                FilteringTextInputFormatter.digitsOnly,
-                IsoCodeFormatter(countries: state.countries)
-              ],
+              inputFormatters: state.formatters,
               onChanged: state.onChanged,
             ),
           )
