@@ -17,6 +17,7 @@ class SelectorButton extends StatelessWidget {
   final String? locale;
   final bool isEnabled;
   final bool isScrollControlled;
+  final Color? cursorColor;
   final Color? iconColor;
 
   final ValueChanged<Country?> onCountryChanged;
@@ -33,6 +34,7 @@ class SelectorButton extends StatelessWidget {
     required this.onCountryChanged,
     required this.isEnabled,
     required this.isScrollControlled,
+    required this.cursorColor,
     required this.iconColor,
   }) : super(key: key);
 
@@ -164,6 +166,7 @@ class SelectorButton extends StatelessWidget {
               searchBoxDecoration: searchBoxDecoration,
               showFlags: selectorConfig.showFlags,
               useEmoji: selectorConfig.useEmoji,
+              useCircleAvatar: selectorConfig.useCircleAvatar,
               autoFocus: autoFocusSearchField,
             ),
           ),
@@ -213,6 +216,8 @@ class SelectorButton extends StatelessWidget {
                       scrollController: controller,
                       showFlags: selectorConfig.showFlags,
                       useEmoji: selectorConfig.useEmoji,
+                      useCircleAvatar: selectorConfig.useCircleAvatar,
+                      cursorColor: cursorColor,
                       autoFocus: autoFocusSearchField,
                     ),
                   ),

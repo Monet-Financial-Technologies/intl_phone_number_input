@@ -12,6 +12,8 @@ class CountrySearchListWidget extends StatefulWidget {
   final bool autoFocus;
   final bool? showFlags;
   final bool? useEmoji;
+  final bool? useCircleAvatar;
+  final Color? cursorColor;
 
   CountrySearchListWidget(
     this.countries,
@@ -20,6 +22,8 @@ class CountrySearchListWidget extends StatefulWidget {
     this.scrollController,
     this.showFlags,
     this.useEmoji,
+    this.useCircleAvatar,
+    this.cursorColor,
     this.autoFocus = false,
   });
 
@@ -61,10 +65,11 @@ class _CountrySearchListWidgetState extends State<CountrySearchListWidget> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TextFormField(
             key: Key(TestHelper.CountrySearchInputKeyValue),
             decoration: getSearchBoxDecoration(),
+            cursorColor: widget.cursorColor,
             controller: _searchController,
             autofocus: widget.autoFocus,
             onChanged: (value) {
@@ -92,6 +97,7 @@ class _CountrySearchListWidgetState extends State<CountrySearchListWidget> {
                 locale: widget.locale,
                 showFlags: widget.showFlags!,
                 useEmoji: widget.useEmoji!,
+                useCircleAvatar: widget.useCircleAvatar!,
               );
               // return ListTile(
               //   key: Key(TestHelper.countryItemKeyValue(country.alpha2Code)),
@@ -136,46 +142,98 @@ class DirectionalCountryListTile extends StatelessWidget {
   final String? locale;
   final bool showFlags;
   final bool useEmoji;
+  final bool useCircleAvatar;
 
-  const DirectionalCountryListTile({
-    Key? key,
-    required this.country,
-    required this.locale,
-    required this.showFlags,
-    required this.useEmoji,
-  }) : super(key: key);
+  const DirectionalCountryListTile(
+      {Key? key,
+      required this.country,
+      required this.locale,
+      required this.showFlags,
+      required this.useEmoji,
+      required this.useCircleAvatar})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      key: Key(TestHelper.countryItemKeyValue(country.alpha2Code)),
-      leading: (showFlags ? _Flag(country: country, useEmoji: useEmoji) : null),
-      title: Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Text(
-          '${Utils.getCountryName(country, locale)}',
-          textDirection: Directionality.of(context),
-          textAlign: TextAlign.start,
-        ),
-      ),
-      subtitle: Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Text(
-          '${country.dialCode ?? ''}',
-          textDirection: TextDirection.ltr,
-          textAlign: TextAlign.start,
-        ),
-      ),
-      onTap: () => Navigator.of(context).pop(country),
-    );
+    return MaterialButton(
+        key: Key(country.alpha2Code!),
+        onPressed: () {
+          Navigator.of(context).pop(country);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: <Widget>[
+              if (showFlags)
+                _Flag(
+                    country: country,
+                    useEmoji: useEmoji,
+                    useCircleAvatar: useCircleAvatar),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      '${Utils.getCountryName(country, locale)}',
+                      textDirection: Directionality.of(context),
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      '${country.dialCode ?? ''}',
+                      textDirection: TextDirection.ltr,
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ));
+
+    return Padding(
+        padding: const EdgeInsets.all(16),
+        child: ListTile(
+          key: Key(TestHelper.countryItemKeyValue(country.alpha2Code)),
+          leading: (showFlags
+              ? _Flag(
+                  country: country,
+                  useEmoji: useEmoji,
+                  useCircleAvatar: useCircleAvatar)
+              : null),
+          title: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              '${Utils.getCountryName(country, locale)}',
+              textDirection: Directionality.of(context),
+              textAlign: TextAlign.start,
+            ),
+          ),
+          subtitle: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              '${country.dialCode ?? ''}',
+              textDirection: TextDirection.ltr,
+              textAlign: TextAlign.start,
+            ),
+          ),
+          onTap: () => Navigator.of(context).pop(country),
+        ));
   }
 }
 
 class _Flag extends StatelessWidget {
   final Country? country;
   final bool? useEmoji;
+  final bool useCircleAvatar;
 
-  const _Flag({Key? key, this.country, this.useEmoji}) : super(key: key);
+  const _Flag(
+      {Key? key, this.country, this.useEmoji, required this.useCircleAvatar})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -187,12 +245,23 @@ class _Flag extends StatelessWidget {
                     style: Theme.of(context).textTheme.headlineSmall,
                   )
                 : country?.flagUri != null
-                    ? CircleAvatar(
-                        backgroundImage: AssetImage(
-                          country!.flagUri,
-                          package: 'intl_phone_number_input_bonimo',
-                        ),
-                      )
+                    ? useCircleAvatar
+                        ? CircleAvatar(
+                            backgroundImage: AssetImage(
+                              country!.flagUri,
+                              package: 'intl_phone_number_input_bonimo',
+                            ),
+                          )
+                        : SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: FittedBox(
+                              child: Image.asset(
+                                country!.flagUri,
+                                package: 'intl_phone_number_input_bonimo',
+                              ),
+                            ),
+                          )
                     : SizedBox.shrink(),
           )
         : SizedBox.shrink();

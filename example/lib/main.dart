@@ -78,6 +78,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 )),
                 hintText: 'Phone Number',
               ),
+              searchBoxDecoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red),
+                  ),
+                  hintText: "test"),
               onSaved: (PhoneNumber number) {
                 print('On Saved: $number');
               },
