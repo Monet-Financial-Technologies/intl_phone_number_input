@@ -185,9 +185,14 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
             countries, widget.initialValue!.isoCode!);
         final number = (country?.dialCode?.substring(1) ?? '') +
             (widget.initialValue!.phoneNumber ?? '');
-        controller!.value = _formatControllerValue(
+
+        String text = _formatControllerValue(
           TextEditingValue.empty,
           TextEditingValue(text: number),
+        ).text;
+        controller!.value = TextEditingValue(
+          text: text,
+          selection: TextSelection.collapsed(offset: text.length),
         );
       }
 
