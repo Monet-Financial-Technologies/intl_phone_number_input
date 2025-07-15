@@ -180,20 +180,18 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   /// [initialiseWidget] sets initial values of the widget
   void initialiseWidget() async {
     if (widget.initialValue != null) {
-      if (widget.initialValue!.phoneNumber != null &&
-          widget.initialValue!.phoneNumber!.isNotEmpty &&
-          (await PhoneNumberUtil.isValidNumber(
-              phoneNumber: widget.initialValue!.phoneNumber!,
-              isoCode: widget.initialValue!.isoCode!))!) {
-        String phoneNumber =
-            await PhoneNumber.getParsableNumber(widget.initialValue!);
-
-        controller!.text = widget.formatInput
-            ? phoneNumber
-            : phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
-
-        phoneNumberControllerListener();
+      if (widget.initialValue!.isoCode != null) {
+        final country = Utils.getCountryFromIsoCode(
+            countries, widget.initialValue!.isoCode!);
+        final number = (country?.dialCode?.substring(1) ?? '') +
+            (widget.initialValue!.phoneNumber ?? '');
+        controller!.value = _formatControllerValue(
+          TextEditingValue.empty,
+          TextEditingValue(text: number),
+        );
       }
+
+      phoneNumberControllerListener();
     }
   }
 
