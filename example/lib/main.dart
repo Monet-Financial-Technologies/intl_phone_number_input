@@ -33,7 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final TextEditingController controller = TextEditingController();
   PhoneNumber number = PhoneNumber(isoCode: 'DE', dialCode: '+49');
-  PhoneNumber initialNumber = PhoneNumber(isoCode: 'DE', dialCode: '+49');
+  PhoneNumber initialNumber =
+      PhoneNumber(phoneNumber: '123', isoCode: 'DE', dialCode: '+49');
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               onInputValidated: (bool value) {
                 print(value);
+                setState(
+                  () {
+                    // simulate real use case
+                  },
+                );
               },
               selectorConfig: SelectorConfig(
                 selectorType: PhoneInputSelectorType.BOTTOM_SHEET,

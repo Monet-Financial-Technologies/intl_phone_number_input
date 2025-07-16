@@ -175,7 +175,6 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
       initialiseWidget();
     }
     super.didUpdateWidget(oldWidget);
-    phoneNumberControllerListener();
   }
 
   /// [initialiseWidget] sets initial values of the widget
@@ -186,6 +185,10 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
             countries, widget.initialValue!.isoCode!);
         final number = (country?.dialCode?.substring(1) ?? '') +
             (widget.initialValue!.phoneNumber ?? '');
+
+        setState(() {
+          this.country = country;
+        });
 
         String text = _formatControllerValue(
           TextEditingValue.empty,
@@ -206,12 +209,6 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
       List<Country> countries =
           CountryProvider.getCountriesData(countries: widget.countries);
 
-      Country? country = previouslySelectedCountry ??
-          Utils.getInitialSelectedCountry(
-            countries,
-            widget.initialValue?.isoCode ?? '',
-          );
-
       // Remove potential duplicates
       countries = countries.toSet().toList();
 
@@ -223,7 +220,6 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
 
       setState(() {
         this.countries = countries;
-        this.country = country;
         this.formatters = [
           FilteringTextInputFormatter.digitsOnly,
           IsoCodeFormatter(countries: countries)
