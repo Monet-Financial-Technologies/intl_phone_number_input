@@ -221,7 +221,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
       setState(() {
         this.countries = countries;
         this.formatters = [
-          FilteringTextInputFormatter.digitsOnly,
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9 ]')),
           IsoCodeFormatter(countries: countries)
         ];
       });
@@ -362,6 +362,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   TextEditingValue _formatControllerValue(
       TextEditingValue oldValue, TextEditingValue newValue) {
     for (final f in formatters) {
+      print(f);
       newValue = f.formatEditUpdate(oldValue, newValue);
     }
     return newValue;
@@ -378,8 +379,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
             controller!.text.substring(this.country!.dialCode!.length - 1);
       }
       if (country != null) {
-        controller!.text = controller!.text =
-            country.dialCode!.substring(1) + controller!.text;
+        controller!.text = country.dialCode!.substring(1) + controller!.text;
       }
 
       final newValue = controller!.value;
