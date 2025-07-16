@@ -362,7 +362,6 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   TextEditingValue _formatControllerValue(
       TextEditingValue oldValue, TextEditingValue newValue) {
     for (final f in formatters) {
-      print(f);
       newValue = f.formatEditUpdate(oldValue, newValue);
     }
     return newValue;
