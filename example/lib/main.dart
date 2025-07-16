@@ -47,7 +47,8 @@ class _MyHomePageState extends State<MyHomePage> {
       if (!mounted) return;
 
       setState(() {
-        initialNumber = PhoneNumber(isoCode: 'DE', dialCode: '+49');
+        // initialNumber = PhoneNumber(isoCode: 'DE', dialCode: '+49');
+        initialNumber = PhoneNumber();
         number = initialNumber;
       });
     });
@@ -62,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             InternationalPhoneNumberInput(
-              key: ValueKey(initialNumber),
+              key: ValueKey(initialNumber.toString()),
               onInputChanged: (PhoneNumber number) {
                 print(number);
                 setState(() {
