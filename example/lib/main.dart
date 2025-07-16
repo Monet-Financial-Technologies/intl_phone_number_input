@@ -45,6 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
             InternationalPhoneNumberInput(
               onInputChanged: (PhoneNumber number) {
                 print(number);
+                setState(() {
+                  this.number = number;
+                });
               },
               onInputValidated: (bool value) {
                 print(value);
@@ -63,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
               cursorColor: Colors.red,
               iconColor: Colors.red,
               ignoreBlank: false,
-              autoValidateMode: AutovalidateMode.disabled,
+              autoValidateMode: AutovalidateMode.onUserInteraction,
               selectorTextStyle: TextStyle(color: Colors.black),
               initialValue: number,
               textFieldController: controller,

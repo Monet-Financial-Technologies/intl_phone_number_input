@@ -165,17 +165,17 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
     );
   }
 
-  @override
-  void didUpdateWidget(InternationalPhoneNumberInput oldWidget) {
-    loadCountries(previouslySelectedCountry: country);
-    if (oldWidget.initialValue?.hash != widget.initialValue?.hash) {
-      if (country!.alpha2Code != widget.initialValue?.isoCode) {
-        loadCountries();
-      }
-      initialiseWidget();
-    }
-    super.didUpdateWidget(oldWidget);
-  }
+  // @override
+  // void didUpdateWidget(InternationalPhoneNumberInput oldWidget) {
+  //   loadCountries(previouslySelectedCountry: country);
+  //   if (oldWidget.initialValue?.hash != widget.initialValue?.hash) {
+  //     if (country!.alpha2Code != widget.initialValue?.isoCode) {
+  //       loadCountries();
+  //     }
+  //     initialiseWidget();
+  //   }
+  //   super.didUpdateWidget(oldWidget);
+  // }
 
   /// [initialiseWidget] sets initial values of the widget
   void initialiseWidget() async {
@@ -222,6 +222,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
       }
 
       setState(() {
+        print('loadcountries updated');
         this.countries = countries;
         this.country = country;
         this.formatters = [
@@ -241,6 +242,9 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
 
       Country? countryFromString =
           Utils.getCountryFromNumber(countries, parsedPhoneNumberString);
+      print('asdads');
+      print(this.country);
+      print(countryFromString);
       if (this.country != countryFromString) {
         setState(() {
           this.country = countryFromString;
