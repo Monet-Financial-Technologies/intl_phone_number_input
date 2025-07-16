@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final TextEditingController controller = TextEditingController();
   PhoneNumber number = PhoneNumber(isoCode: 'DE', dialCode: '+49');
+  PhoneNumber initialNumber = PhoneNumber(isoCode: 'DE', dialCode: '+49');
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +46,13 @@ class _MyHomePageState extends State<MyHomePage> {
             InternationalPhoneNumberInput(
               onInputChanged: (PhoneNumber number) {
                 print(number);
-                setState(() {
-                  this.number = number;
-                });
+                if (this.number.phoneNumber != number.phoneNumber &&
+                    this.number.dialCode != number.dialCode &&
+                    this.number.isoCode != number.isoCode) {
+                  setState(() {
+                    this.number = number;
+                  });
+                }
               },
               onInputValidated: (bool value) {
                 print(value);
@@ -68,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ignoreBlank: false,
               autoValidateMode: AutovalidateMode.onUserInteraction,
               selectorTextStyle: TextStyle(color: Colors.black),
-              initialValue: number,
+              initialValue: initialNumber,
               textFieldController: controller,
               autoFocus: true,
               formatInput: false,
