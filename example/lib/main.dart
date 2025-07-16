@@ -31,10 +31,27 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final TextEditingController controller = TextEditingController();
-  PhoneNumber number = PhoneNumber(isoCode: 'DE', dialCode: '+49');
-  PhoneNumber initialNumber =
-      PhoneNumber(phoneNumber: '123', isoCode: 'DE', dialCode: '+49');
+  PhoneNumber number = PhoneNumber();
+  PhoneNumber initialNumber = PhoneNumber();
+
+  @override
+  void initState() {
+    super.initState();
+    doStuff();
+  }
+
+  void doStuff() async {
+    // Simulate real case
+    await Future.delayed(Durations.medium2);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      setState(() {
+        initialNumber = PhoneNumber(isoCode: 'DE', dialCode: '+49');
+        number = initialNumber;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,15 +62,12 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             InternationalPhoneNumberInput(
+              key: ValueKey(initialNumber),
               onInputChanged: (PhoneNumber number) {
                 print(number);
-                if (this.number.phoneNumber != number.phoneNumber &&
-                    this.number.dialCode != number.dialCode &&
-                    this.number.isoCode != number.isoCode) {
-                  setState(() {
-                    this.number = number;
-                  });
-                }
+                setState(() {
+                  this.number = number;
+                });
               },
               onInputValidated: (bool value) {
                 print(value);
@@ -80,7 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
               autoValidateMode: AutovalidateMode.onUserInteraction,
               selectorTextStyle: TextStyle(color: Colors.black),
               initialValue: initialNumber,
-              textFieldController: controller,
               autoFocus: true,
               formatInput: false,
               keyboardType:
@@ -138,7 +151,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    controller.dispose();
     super.dispose();
   }
 }
