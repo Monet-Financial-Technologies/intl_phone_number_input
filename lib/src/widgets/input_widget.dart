@@ -605,8 +605,8 @@ class IsoCodeFormatter extends TextInputFormatter {
       TextEditingValue oldValue, TextEditingValue newValue) {
     bool reevaluate = true;
     while (reevaluate) {
-      Country? newCountry =
-          Utils.getCountryFromNumber(countries, newValue.text);
+      Country? newCountry = Utils.getCountryFromNumber(
+          countries, newValue.text.replaceAll(' ', ''));
 
       final (bool needsReevaluation, TextEditingValue formattedText) =
           _doFormatting(
