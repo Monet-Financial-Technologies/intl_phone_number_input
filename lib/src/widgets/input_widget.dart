@@ -183,8 +183,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
       if (widget.initialValue!.isoCode != null) {
         final country = Utils.getCountryFromIsoCode(
             countries, widget.initialValue!.isoCode!);
-        final number = (country?.dialCode?.substring(1) ?? '') +
-            (widget.initialValue!.phoneNumber ?? '');
+        final number = widget.initialValue!.phoneNumber ?? '';
 
         setState(() {
           this.country = country;
@@ -222,7 +221,7 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
         this.countries = countries;
         this.formatters = [
           FilteringTextInputFormatter.allow(RegExp(r'[0-9 ]')),
-          IsoCodeFormatter(countries: countries)
+          // IsoCodeFormatter(countries: countries)
         ];
       });
     }
@@ -235,25 +234,25 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
       String parsedPhoneNumberString =
           controller!.text.replaceAll(RegExp(r'[^\d+]'), '');
 
-      Country? countryFromString =
-          Utils.getCountryFromNumber(countries, parsedPhoneNumberString);
-      if (this.country != countryFromString) {
-        setState(() {
-          this.country = countryFromString;
-        });
-      }
+      // Country? countryFromString =
+      //     Utils.getCountryFromNumber(countries, parsedPhoneNumberString);
+      // if (this.country != countryFromString) {
+      //   setState(() {
+      //     this.country = countryFromString;
+      //   });
+      // }
 
       // Library expects phoneNumber to be without isoCode
-      String phoneNumberWithoutIso = countryFromString == null
-          ? ''
-          : parsedPhoneNumberString
-              .substring(countryFromString.dialCode!.length - 1);
+      // String phoneNumberWithoutIso = countryFromString == null
+      //     ? ''
+      //     : parsedPhoneNumberString
+      //         .substring(countryFromString.dialCode!.length - 1);
 
-      getParsedPhoneNumber(phoneNumberWithoutIso, this.country?.alpha2Code)
+      getParsedPhoneNumber(parsedPhoneNumberString, this.country?.alpha2Code)
           .then((phoneNumber) {
         if (phoneNumber == null) {
           String phoneNumber =
-              '${this.country?.dialCode}$phoneNumberWithoutIso';
+              '${this.country?.dialCode}$parsedPhoneNumberString';
 
           if (widget.onInputChanged != null) {
             widget.onInputChanged!(PhoneNumber(
@@ -370,20 +369,20 @@ class _InputWidgetState extends State<InternationalPhoneNumberInput> {
   /// Changes Selector Button Country and Validate Change.
   void onCountryChanged(Country? country) {
     setState(() {
-      final oldValue = controller!.value;
+      // final oldValue = controller!.value;
 
-      // Replace text's isoCode
-      if (this.country != null) {
-        controller!.text =
-            controller!.text.substring(this.country!.dialCode!.length - 1);
-      }
-      if (country != null) {
-        controller!.text = country.dialCode!.substring(1) + controller!.text;
-      }
+      // // Replace text's isoCode
+      // if (this.country != null) {
+      //   controller!.text =
+      //       controller!.text.substring(this.country!.dialCode!.length - 1);
+      // }
+      // if (country != null) {
+      //   controller!.text = country.dialCode!.substring(1) + controller!.text;
+      // }
 
-      final newValue = controller!.value;
+      // final newValue = controller!.value;
 
-      controller!.value = _formatControllerValue(oldValue, newValue);
+      // controller!.value = _formatControllerValue(oldValue, newValue);
 
       // For some reason selects whole number when setting text, so
       // use PostFrameCallback to force collapsed text selection

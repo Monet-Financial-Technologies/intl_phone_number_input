@@ -95,9 +95,10 @@ class SelectorButton extends StatelessWidget {
                         BorderRadius.circular(selectorConfig.borderRadius),
                   ),
                   child: Container(
-                    height: 28,
+                    height: 32,
                     padding: selectorConfig.padding,
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
                           height: 20,
@@ -113,15 +114,17 @@ class SelectorButton extends StatelessWidget {
                             ),
                           ),
                         ),
+                        SizedBox(width: 12.0),
+                        Text(
+                          country?.dialCode ?? '',
+                          textDirection: TextDirection.ltr,
+                          style: selectorTextStyle,
+                        ),
                         Icon(Icons.arrow_drop_down, size: 20),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: 4,
-                ),
-                const Text('+'),
                 const SizedBox(
                   width: 4,
                 ),
