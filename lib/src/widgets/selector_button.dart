@@ -13,6 +13,7 @@ class SelectorButton extends StatelessWidget {
   final SelectorConfig selectorConfig;
   final TextStyle? selectorTextStyle;
   final double? selectorIconIsoCodePadding;
+  final double? selectorRightPadding;
   final InputDecoration? searchBoxDecoration;
   final bool autoFocusSearchField;
   final String? locale;
@@ -30,6 +31,7 @@ class SelectorButton extends StatelessWidget {
     required this.selectorConfig,
     required this.selectorTextStyle,
     required this.selectorIconIsoCodePadding,
+    required this.selectorRightPadding,
     required this.searchBoxDecoration,
     required this.autoFocusSearchField,
     required this.locale,
@@ -129,8 +131,8 @@ class SelectorButton extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: 4,
+                SizedBox(
+                  width: selectorRightPadding,
                 ),
               ],
             ),
