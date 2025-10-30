@@ -114,12 +114,14 @@ class SelectorButton extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: 12.0),
-                        Text(
-                          country?.dialCode ?? '',
-                          textDirection: TextDirection.ltr,
-                          style: selectorTextStyle,
-                        ),
+                        if (country != null) ...[
+                          SizedBox(width: 12.0),
+                          Text(
+                            country?.dialCode ?? '',
+                            textDirection: TextDirection.ltr,
+                            style: selectorTextStyle,
+                          )
+                        ],
                         Icon(Icons.arrow_drop_down, size: 20),
                       ],
                     ),
