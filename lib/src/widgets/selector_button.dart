@@ -12,6 +12,7 @@ class SelectorButton extends StatelessWidget {
   final Country? country;
   final SelectorConfig selectorConfig;
   final TextStyle? selectorTextStyle;
+  final double? selectorIconIsoCodePadding;
   final InputDecoration? searchBoxDecoration;
   final bool autoFocusSearchField;
   final String? locale;
@@ -28,6 +29,7 @@ class SelectorButton extends StatelessWidget {
     required this.country,
     required this.selectorConfig,
     required this.selectorTextStyle,
+    required this.selectorIconIsoCodePadding,
     required this.searchBoxDecoration,
     required this.autoFocusSearchField,
     required this.locale,
@@ -115,7 +117,7 @@ class SelectorButton extends StatelessWidget {
                           ),
                         ),
                         if (country != null) ...[
-                          SizedBox(width: 12.0),
+                          SizedBox(width: selectorIconIsoCodePadding),
                           Text(
                             country?.dialCode ?? '',
                             textDirection: TextDirection.ltr,
